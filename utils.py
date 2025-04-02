@@ -1,5 +1,5 @@
 from getpass import getpass
-import hashlib, secrets, os, base64, datetime
+import hashlib, secrets, os, base64, datetime, platform
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import serialization, hashes
@@ -42,6 +42,13 @@ def generatekeys():
         f.write(pem_public_key.decode())
 
     print("RSA key pair encoded and saved to filesystem (Check for a folder named 'Vaults')")
+
+
+def clearScreen():
+    if platform.system() == "Windows":
+        os.system('cls')
+    else:
+        os.system('clear')
 
 
 
