@@ -8,6 +8,7 @@ class PassMan:
         pass
 
     def Options(self):
+        clearScreen()
         self.Border()
         print("PassMan Menu")
         print("1: Add Credentials")
@@ -21,32 +22,34 @@ class PassMan:
         match choice:
             case '1':
                 print("ADDING CREDENTIALS...")
+                clearScreen()
                 self.addcredentials()
 
             case '2':
                 print("SHOWING CREDENTIALS...")
+                clearScreen()
                 self.showcredentials()
 
             case '3':
                 print("GENERATING A NEW PASSWORD")
+                clearScreen()
                 pw = self.generatePW()
-                feedback = input("GENERATED PASSWORD: " + pw + "\nWOULD YOU LIKE TO SAVE THIS PASSWORD?: ")
-                if(feedback == "yes") or (feedback == "Yes"):
-                    print("Working on save feature")
-
-                else:
-                    print("Okay, sounds good")
+                print("GENERATED PASSWORD: " + pw + "\nMAKE SURE TO COPY THIS PASSWORD IF YOU WISH TO SAVE IT, I DO NOT WANT TO REMEMBER ANYTHING")
                     
                 
 
             case '4':
-                print("Delete Credentials")
+                print("DELETING CREDENTIALS")
+                clearScreen()
+                self.deleteCredentials()
 
             case '5':
+                clearScreen()
                 print("Goodbye")
                 sys.exit(0)
             
             case _ :
+                clearScreen()
                 print("Goodbye")
                 sys.exit(0)
 
@@ -98,7 +101,7 @@ class PassMan:
         else:
             self = sqlite3.connect("Vault/Pm.db")
             cursor = self.cursor()
-            cursor.execute("CREATE TABLE users(number, uname, pword, platform)")
+            cursor.execute("CREATE TABLE actor(number, uname, pword, platform)")
             res = cursor.execute("SELECT name FROM sqlite_master")
             return res.fetchone()
     
@@ -110,25 +113,35 @@ class PassMan:
         
         self = sqlite3.connect("Vault/Pm.db")
         cursor = self.cursor()
-        for row in cursor.execute("SELECT * FROM users"):
+        for row in cursor.execute("SELECT * FROM actor"):
             index += 1
 
         data = (index, encryptData(username), encryptData(password), (platform))
-        cursor.execute("INSERT INTO users VALUES(?, ?, ?, ?)", data)
+        cursor.execute("INSERT INTO actor VALUES(?, ?, ?, ?)", data)
         self.commit()
 
     def showcredentials(self):
         decryptionpw = getpass("Enter your decryption key: ")
         self = sqlite3.connect("Vault/Pm.db")
         cursor = self.cursor()
-        for row in cursor.execute("SELECT number, uname, pword, platform FROM users"):
+        for row in cursor.execute("SELECT number, uname, pword, platform FROM actor"):
             data = list(row)
             decryptedData = [data[0], decryptData(data[1], decryptionpw), decryptData(data[2], decryptionpw), data[3]]
-            print(decryptedData)
+            print("\nIndex: " + str(decryptedData[0]) + "\nUsername: " + str(decryptedData[1]) + "\nPassword: " + str(decryptedData[2]) + "\nPlatform: " + str(decryptedData[3]))
+
+    
+    def deleteCredentials(self):
+        index = input("Emter the user index to delete: ")
+        self = sqlite3.connect("Vault/Pm.db")
+        cursor = self.cursor()
+        for row in cursor.execute("SELECT * FROM actor"):
+            cursor.execute("DELETE FROM actor WHERE number = ?", index)
+
             
 
 
     def run(self):
+        clearScreen()
         
         if os.path.exists("Vault/certificate.pem"):
             print("PRIVATE KEY EXISTS, GENERATION UNNECESSARY...")
@@ -149,6 +162,7 @@ class PassMan:
             self.Options()
         else:
             sys.exit(0)
+
 
 
         
