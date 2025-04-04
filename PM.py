@@ -41,7 +41,7 @@ class PassMan:
             case '4':
                 print("DELETING CREDENTIALS")
                 clearScreen()
-                self.deleteCredentials()
+                self.deletecredentials()
 
             case '5':
                 clearScreen()
@@ -119,6 +119,7 @@ class PassMan:
         data = (index, encryptData(username), encryptData(password), (platform))
         cursor.execute("INSERT INTO actor VALUES(?, ?, ?, ?)", data)
         self.commit()
+        self.close()
 
     def showcredentials(self):
         decryptionpw = getpass("Enter your decryption key: ")
@@ -127,21 +128,25 @@ class PassMan:
         for row in cursor.execute("SELECT number, uname, pword, platform FROM actor"):
             data = list(row)
             decryptedData = [data[0], decryptData(data[1], decryptionpw), decryptData(data[2], decryptionpw), data[3]]
-            print("\nIndex: " + str(decryptedData[0]) + "\nUsername: " + str(decryptedData[1]) + "\nPassword: " + str(decryptedData[2]) + "\nPlatform: " + str(decryptedData[3]))
+            print("\nUser Index: " + str(decryptedData[0]) + "\nUsername: " + str(decryptedData[1]) + "\nPassword: " + str(decryptedData[2]) + "\nPlatform: " + str(decryptedData[3]))
+        self.close()
 
-    
-    def deleteCredentials(self):
-        index = input("Emter the user index to delete: ")
+
+    def deletecredentials(self):
+        index = input("Enter the index of credentials you with to delete: ")
         self = sqlite3.connect("Vault/Pm.db")
         cursor = self.cursor()
-        for row in cursor.execute("SELECT * FROM actor"):
-            cursor.execute("DELETE FROM actor WHERE number = ?", index)
-
+        cursor.execute("DELETE FROM actor WHERE number = ?", index).rowcount
+        self.commit()
+        self.close()
             
 
 
     def run(self):
         clearScreen()
+        self.Border()
+
+
         
         if os.path.exists("Vault/certificate.pem"):
             print("PRIVATE KEY EXISTS, GENERATION UNNECESSARY...")
@@ -151,7 +156,6 @@ class PassMan:
         else:
             print("PRIVATE KEYS DON'T EXIST, BEGINNING USER REGISTRATION...")
             generatekeys()
-            generateCert()
             self.createDB()
             self.Options()
 
@@ -164,8 +168,6 @@ class PassMan:
             sys.exit(0)
 
 
-
         
 
-pm = PassMan()
-pm.run()
+
