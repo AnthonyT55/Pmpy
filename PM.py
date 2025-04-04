@@ -148,7 +148,7 @@ class PassMan:
 
 
         
-        if os.path.exists("Vault/certificate.pem"):
+        if os.path.exists("Vault/rsa.pem"):
             print("PRIVATE KEY EXISTS, GENERATION UNNECESSARY...")
             print("STARTING PASSMAN")
             self.createDB()
