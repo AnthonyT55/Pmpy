@@ -43,7 +43,6 @@ def generatekeys():
 
     print("RSA key pair encoded and saved to filesystem (Check for a folder named 'Vaults')")
 
-
 def clearScreen():
     if platform.system() == "Windows":
         os.system('cls')
@@ -52,49 +51,6 @@ def clearScreen():
 
 
 
-
-def generateCert():
-    country = input("Enter your country (2 Letter format): ")
-    state = input("Enter your state: ")
-    city = input("Enter your city: ")
-    organizationname = input("Enter the name of your organization: ")
-    commonname = input("Enter your common/program name: ")
-
-
-    pw = getpass("Enter your password: ")
-    with open("Vault/rsa.pem", "rb") as f:
-        private_key = serialization.load_pem_private_key(
-            f.read(),
-            password=pw.encode('utf-8')
-        )
-
-    subject = issuer = x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, country),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, state),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, city),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, organizationname),
-        x509.NameAttribute(NameOID.COMMON_NAME, commonname),
-    ])
-
-    cert = x509.CertificateBuilder().subject_name(
-        subject
-    ).issuer_name(
-        issuer
-    ).public_key(
-        private_key.public_key()
-    ).serial_number(
-        x509.random_serial_number()
-    ).not_valid_before(
-        datetime.datetime.now(datetime.timezone.utc)
-    ).not_valid_after(
-        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=10)
-    ).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName("localhost")]),
-        critical=False,
-    ).sign(private_key, hashes.SHA256())
-
-    with open("Vault/certificate.pem", "wb") as f:
-        f.write(cert.public_bytes(serialization.Encoding.PEM))
 
 
 def encryptData(data):
@@ -113,8 +69,7 @@ def encryptData(data):
     )
 
     return ciphertext
-    #CONVERTS ENCRYPTED DATA TO STRING FORMAT FOR PRINTING
-    #return base64.b64encode(ciphertext).decode('utf-8')
+    
 
 
 def decryptData(data, decryptionpw):
@@ -140,11 +95,14 @@ def decryptData(data, decryptionpw):
         )
 
     return decryptedData
-        
 
-    
+
+
+
 
 
 #print(encryptData("potato"))
 #print(decryptData(encryptData("potato")))
 #generateCert(country, state, city, organizationname, commonname)
+
+
