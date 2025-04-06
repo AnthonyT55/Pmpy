@@ -15,7 +15,8 @@ class PassMan:
         print("2: Show Credentials")
         print("3: Generate Password")
         print("4: Delete Credentials")
-        print("5: Exit")
+        print("5: Change User Data")
+        print("6: Exit")
         
 
         choice = input("Enter your choice: ")
@@ -44,6 +45,11 @@ class PassMan:
                 self.deletecredentials()
 
             case '5':
+                print("UPDATING CREDENTIALS")
+                clearScreen()
+                self.updatecredentials()
+
+            case '6':
                 clearScreen()
                 print("Goodbye")
                 sys.exit(0)
@@ -133,14 +139,42 @@ class PassMan:
 
 
     def deletecredentials(self):
-        index = input("Enter the index of credentials you with to delete: ")
+        index = int(input("Enter the index of credentials you with to delete: "))
         self = sqlite3.connect("Vault/Pm.db")
         cursor = self.cursor()
-        cursor.execute("DELETE FROM actor WHERE number = ?", index).rowcount
+        cursor.execute("DELETE FROM actor WHERE number = ?", (index, ))
+        self.commit()
+        print("INFORMATION DELETED")
+        self.close()
+
+    def updatecredentials(self):
+        index = int(input("Enter the index of credentials you would like to change: "))
+        clearScreen()
+        self = sqlite3.connect("Vault/Pm.db")
+        cursor = self.cursor()
+        choice = input("Which value would you like to change?\nFOR USERNAME: 1\nFOR PASSWORD: 2\nFOR PLATFORM: 3\n\nYour choice: ")
+        match choice:
+            case '1':
+                val = input("Please enter your new username: ")
+                updatedval = encryptData(val)
+                cursor.execute("UPDATE actor SET uname = ? WHERE number = ?", (updatedval, index))
+            
+            case '2':
+                val = input("Please enter your new password value: ")
+                updatedval = encryptData(val)
+                cursor.execute("UPDATE actor SET pword = ? WHERE number = ?", (updatedval, index))
+
+            case '3':
+                val = input("Please enter your new platform value: ")
+                updatedval = encryptData(val)
+                cursor.execute("UPDATE actor SET pword = ? WHERE number = ?", (updatedval, index))
+
+            
+            case _ :
+                print("User submitted an invalid option...")
+
         self.commit()
         self.close()
-            
-
 
     def run(self):
         clearScreen()
@@ -150,14 +184,20 @@ class PassMan:
         
         if os.path.exists("Vault/rsa.pem"):
             print("PRIVATE KEY EXISTS, GENERATION UNNECESSARY...")
+            clearScreen()
+            self.Border()
             print("STARTING PASSMAN")
-            self.createDB()
-            self.Options()
+            loginattempt = getpass("ENTER YOUR DECRYPTION KEY: ")
+            if loadpkey(loginattempt):
+                self.createDB()
+                self.Options()
+            else:
+                sys.exit(1)
         else:
             print("PRIVATE KEYS DON'T EXIST, BEGINNING USER REGISTRATION...")
             generatekeys()
             self.createDB()
-            self.Options()
+            self.run()
 
 
     def rerun(self):
@@ -166,6 +206,11 @@ class PassMan:
             self.Options()
         else:
             sys.exit(0)
+
+
+        
+
+
 
 
         
