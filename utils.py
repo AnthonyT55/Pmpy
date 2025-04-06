@@ -50,7 +50,17 @@ def clearScreen():
         os.system('clear')
 
 
-
+def loadpkey(decryptionpw):
+    try:
+        with open("Vault/rsa.pem", "rb") as f:
+            private_key = serialization.load_pem_private_key(
+                f.read(),
+                password=decryptionpw.encode('utf-8'),
+            )
+        return True
+    except:
+        print("INVALID KEY... CLOSING")
+        return False
 
 
 def encryptData(data):
