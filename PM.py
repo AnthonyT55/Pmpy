@@ -8,6 +8,7 @@ class PassMan:
         pass
 
     def Options(self):
+        self.reNumber()
         clearScreen()
         self.Border()
         print("PassMan Menu")
@@ -30,6 +31,7 @@ class PassMan:
                 print("SHOWING CREDENTIALS...")
                 clearScreen()
                 self.showcredentials()
+                
 
             case '3':
                 print("GENERATING A NEW PASSWORD")
@@ -145,7 +147,7 @@ class PassMan:
         cursor.execute("DELETE FROM actor WHERE number = ?", (index, ))
         self.commit()
         print("INFORMATION DELETED")
-        self.close()
+        
 
     def updatecredentials(self):
         index = int(input("Enter the index of credentials you would like to change: "))
@@ -175,6 +177,27 @@ class PassMan:
 
         self.commit()
         self.close()
+
+
+    def reNumber(self):
+        self = sqlite3.connect("Vault/Pm.db")
+        cursor = self.cursor()
+
+        cursor.execute("SELECT uname, pword, platform FROM actor ORDER BY number")
+        rows = cursor.fetchall()
+
+        cursor.execute("DELETE FROM actor")
+        self.commit()
+
+        for i, row in enumerate(rows, start=1):
+            cursor.execute("INSERT INTO actor (number, uname, pword, platform) VALUES (?, ?, ?, ?)", (i, *row))
+    
+        self.commit()
+        self.close()
+        
+
+
+
 
     def run(self):
         clearScreen()
@@ -210,6 +233,10 @@ class PassMan:
 
         
 
+
+
+
+        
 
 
 
