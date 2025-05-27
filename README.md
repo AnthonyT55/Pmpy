@@ -10,21 +10,21 @@ Features
 
 Installation
  1. Clone the repository:
-
+ 
     git clone https://github.com/AnthonyT55/Pmpy.git 
 
- 2. Navigate into the Pmpy directory
+ 4. Navigate into the Pmpy directory
 
      cd Pmpy
 
- 3. Install the required dependencies:
+ 5. Install the required dependencies:
     
     pip install -r requirements.txt
 
 Usage 
 
    1. Run the main application:
+    
+     python3 main.py
 
-        python3 main.py
-
-    Follow the on-screen prompts to add, retrieve, or manage your passwords.
+   Follow the on-screen prompts to add, retrieve, or manage your passwords.
