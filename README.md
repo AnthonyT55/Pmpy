@@ -19,7 +19,7 @@ Installation
 
  5. Install the required dependencies:
     
-    pip install -r requirements.txt
+   > pip install -r requirements.txt
 
 Usage 
 
